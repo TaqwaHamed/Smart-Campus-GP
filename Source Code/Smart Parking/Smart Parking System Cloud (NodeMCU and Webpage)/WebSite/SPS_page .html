@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<title>Smart Parking System Dashboard</title>
+		<style>
+			html {
+				font-family: Arial;
+				display: inline-block;
+				margin: 0px auto;
+				text-align: center;
+			}
+      
+			h1 { font-size: 2.0rem; 
+				 color:#2980b9;
+				 text-align: center;
+				 margin-top: 25px;
+				 margin-bottom: 25px;
+				}
+      table { text-align: center;}
+    	    th{ color: #fff;}
+      }
+
+		</style>
+	</head>
+	<body>
+		<div>
+			<h1>Smart Parking System Dashboard</h1>
+			<br>
+			
+			<table class="table table-striped">
+  			  <tr  class="bg-info">
+       			 <th>USER</th>
+       			 <th>ID</th>
+       			  <th>Time</th>
+       			 <th>Status</th>
+  			  </tr>
+
+   			  <tbody id="myTable">
+        
+    		  </tbody>
+			</table>
+
+			<br>
+		</div>
+		<br>
+		
+		<script>
+		
+			var tempEnterID = 0;
+			var tempExistID = 0;
+
+			setInterval(function() {
+			// Call a function repetatively with 15 Second interval
+				getThingSpeakUserID();
+			}, 15000);
+
+
+			function getThingSpeakUserID() {
+				var xhttp = new XMLHttpRequest();
+				var table = document.getElementById('myTable')
+				//var table = document.Date();
+			 	xhttp.onreadystatechange = function() {
+
+					if (this.readyState == 4 && this.status == 200) {
+						var myObj = JSON.parse(this.responseText);
+							
+						if( (myObj.feeds[1].field1 !== null) ){
+							if(tempEnterID != myObj.feeds[1].field1){
+								tempEnterID = myObj.feeds[1].field1;
+							var row = `<tr>
+										<td>User ${myObj.feeds[1].field1}</td>
+										<td>${myObj.feeds[1].field1}</td>
+										<td>${myObj.feeds[1].created_at}</td>
+										<td>Entered</td>
+					  				</tr>`
+						table.innerHTML += row
+								}
+						}
+
+						if( myObj.feeds[1].field2 !== null){
+							if(tempExistID != myObj.feeds[1].field2){
+								tempExistID = myObj.feeds[1].field2;
+							var row = `<tr>
+										<td>User ${myObj.feeds[1].field2}</td>
+										<td>${myObj.feeds[1].field2}</td>
+										<td>${myObj.feeds[1].created_at}</td>
+										<td>Exist</td>
+					  				</tr>`
+						    table.innerHTML += row
+								}
+						}
+						
+							
+					}
+				};
+				xhttp.open("GET", "https://api.thingspeak.com/channels/1796003/feeds.json?results=2", true);
+				xhttp.send();
+			}
+
+		</script>
+	</body>
+</html>
